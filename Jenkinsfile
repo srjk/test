@@ -9,23 +9,18 @@ dockerImage = ''
 stage('Building image') {
       steps{
         script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+          dockerImage = docker.build("shukabr1/docker-test")
         }
       }
     }
     stage('Deploy Image') {
       steps{
         script {
-          docker.withRegistry( '', registryCredential ) {
-            dockerImage.push()
+          docker.withRegistry( 'https://registry.hub.docker.com', 'dockerhub' ) {
+            dockerImage.push("${env_BUILD_NUMBER}")
           }
         }
       }
     }
-    stage('Remove Unused docker image') {
-      steps{
-        sh "docker rmi $registry:$BUILD_NUMBER"
-      }
-
-}           
+               
 }}
